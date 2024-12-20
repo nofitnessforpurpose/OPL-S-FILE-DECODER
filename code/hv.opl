@@ -1,0 +1,31 @@
+HV:(I$)
+REM Convert 2 character string ASCII hex
+REM to a byte value
+
+LOCAL C%
+LOCAL D%
+LOCAL V%
+LOCAL H$(2)
+
+REM Ensure upper case for character conversion
+H$ = UPPER$(I$)
+
+REM Extract ASCII character values
+C% = ASC(MID$(H$, 1, 1))
+D% = ASC(MID$(H$, 2, 1))
+
+IF (C% > %9)
+  C% = C% - 55 : REM Adjust A to F
+ELSE
+  C% = C% - %0
+ENDIF
+
+IF (D% > %9)
+  D% = D% - 55 : REM Adjust A to F
+ELSE
+  D% = D% - %0 : REM Subtract ASCII value offset
+ENDIF
+
+V% = (C% * 16) + D% : REM (MSN * 16) + LSN
+
+RETURN V%
