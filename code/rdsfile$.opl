@@ -1,0 +1,168 @@
+RDSFILE$:(fname$)
+REM Read a Motorola S-Record file format
+REM Convert ASCII hexadecimal records to
+REM return a string containing machine code
+
+REM Handles S19-style 16 bit (2 byte) record types only
+REM i.e. records: S0, S1, S5 and S9
+
+REM In this variant the code must be
+REM less than 128 bytes in length due
+REM to String length limits.
+REM Code must be in address sequence.
+
+REM Supply with a file name or enter file name
+
+REM Revision : 0.1
+REM Author   : NoFitnessForPurpose
+REM Date     : 20 Dec 2024
+
+REM Requires :
+REM          : HV
+
+LOCAL fn$(16), ln$(255), res$(128), bn$(128)
+LOCAL rt%, bc%, addr%, chk%, cchk%
+LOCAL dp%, i%, j%, bval%
+
+REM Prompt for the file name
+IF (fname$ = "")
+  AT 1,1
+  PRINT "SREC: file name?"
+  AT 1,2
+  INPUT fn$
+ELSE
+  fn$ = fname$
+ENDIF
+IF (fn$ = "")
+  REM Check in case user did not enter a file name
+  j%=VIEW(2, "No Hex file name supplied !")
+  STOP
+ENDIF
+IF NOT EXIST(fn$)
+  j%=VIEW(2, "No file located !")
+  STOP
+ENDIF
+
+REM Open the file for reading
+OPEN fn$, A, ln$
+IF ERR
+  j%=VIEW(2, "File error !:" + FIX$(ERR,0,4))
+  STOP
+ENDIF
+
+AT 1,1
+PRINT "SREC to M. Code "
+AT 1,2
+PRINT "Lines    :",COUNT
+PAUSE 10
+
+REM Read each line from the file
+rt% = 0: REM Initialise record type - 9 = End record
+WHILE (NOT EOF) AND (rt%<>9)
+  AT 1,2
+  PRINT "Line No. :",POS
+  ln$ = A.ln$
+  PAUSE 1
+  res$ = ""
+
+  REM Validate Motorola S-record prefix and other format issues
+  IF (LEN(ln$) = 0)
+    AT 1,2
+    Print "Blank Ln:",POS
+    PAUSE 30
+  ELSEIF (LEN(ln$) < 10)
+    AT 1,2
+    PRINT "Short Ln :",POS
+    PAUSE 30
+  ELSEIF (LEFT$(ln$, 1) <> "S")
+    j%=VIEW(2, "Invalid S rec. :" + FIX$(POS,0,2) + " >" + ln$ + "<")
+    STOP
+  ELSEIF (LEN(ln$) > 75)
+    REM 16 Bit line length limit
+    j%=VIEW(2, "Invalid S record length. - Line :" + FIX$(POS,0,2) + " >" + ln$ + "<")
+    STOP
+  ENDIF
+
+  IF (LEFT$(ln$, 1) = "S") AND (LEN(ln$) < 75)
+    REM Extract record type and byte count
+    rt% = ASC(LEFT$(MID$(ln$, 2, 1), 1))-%0 : REM
+    bc% = HV:(MID$(ln$, 3, 2))
+
+    REM Extract the address from the record string
+    IF (rt% = 0)
+      addr%= HV:(MID$(ln$, 5, 4))
+      dp%=9
+    ELSEIF ((rt% = 1) OR (rt% = 9))
+      addr% = HV:(MID$(ln$, 5, 4))
+      dp% = 9
+    ELSEIF ((rt% = 2) OR (rt% = 8))
+      addr% = HV:(MID$(ln$, 5, 6))
+      dp% = 11
+    ELSEIF ((rt% = 3) or (rt% = 7))
+      addr% = HV:(MID$(ln$, 5, 8))
+      dp% = 13
+    ELSE
+      j%=VIEW(2, "Record Type Issue :" + FIX$(rt%, 0, 4))
+      STOP
+    ENDIF
+
+    AT 1,2
+    PRINT "Rec. Type:",rt%
+    PAUSE 30
+
+    REM Parse the data bytes and build the result string
+    cchk% = bc% + (addr% AND $FF) + ((addr% / 256) AND $FF)
+    i%=0
+    WHILE (i% + dp%) <= (LEN(ln$) - 2)
+      AT 1,2
+      PRINT "Hx Val:";MID$(ln$, dp% + i%, 2);" Pos:";dp% + i%
+      PAUSE 1
+      bval% = HV:(MID$(ln$, dp% + i%, 2))
+      res$ = res$ + CHR$(bval%) : REM  Build Machine Code
+      cchk% = cchk% + bval%
+      I% = I% + 2
+    ENDWH
+
+    REM Validate checksum when line processing completed
+    chk% = HV:(RIGHT$(ln$, 2)) : REM   Current lines checksum
+    cchk% = $FF - (cchk% AND $FF) : REM  Calculated checksum
+    IF (chk% <> cchk%)
+      j% = VIEW(2,"CRC Error in record :" + FIX$(POS, 0, 4) + " Expected :" + RIGHT$(ln$, 2) + " Calculated :" + HEX$(cchk%))
+      STOP
+    ENDIF
+
+    IF (rt% = 0)
+      IF (res$ = "HDR")
+        AT 1,2
+        PRINT "Std. Hdr.",res$
+        PAUSE 30
+      ELSE
+        REM Display non std. hdr.
+        j%=VIEW(2,"Start Record Identifier >" + res$ + "<")
+      ENDIF
+    ELSEIF (rt% = 1)
+      bn$ = bn$ + res$ : REM Add new Machine Code to any existing
+    ELSEIF (rt% = 5)
+      AT 1,2
+      PRINT "Prv. Recs. ";(ASC(MID$(res$, 1, 1))*256) + ASC(MID$(res$, 2, 1))
+      PAUSE 30
+    ELSEIF (rt% = 9)
+      AT 1,2
+      PRINT "End of records"
+      PAUSE 50
+    ENDIF
+
+  ENDIF : REM <-- End of ln$ looks like an S record
+  NEXT : REM Move to next line in file
+  AT 1,2
+  PRINT "                "
+ENDWH
+
+CLOSE : REM Close the file
+
+AT 1,2
+PRINT "M-Code :";LEN(bn$),"B"
+PAUSE 50
+
+REM Return the result Machine code string
+RETURN bn$
