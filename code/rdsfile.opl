@@ -1,0 +1,8 @@
+rdsfile:
+REM Wrapper to read
+REM a Motorola S File
+
+LOCAL b$(128)
+
+b$=RDSFILE$:("A:BEEPHEX")
+USR(ADDR(b$)+1, 0)
