@@ -47,10 +47,13 @@ The (trivial) source assembly file beep.asm is shown below:
 ```
 ; beep.asm
 ; Converted from https://www.jaapsch.net/psion/mctutor1.htm
-#include "osvars.inc"  
-#include "oseror.inc"  
-#include "oshead.inc"			
-#include "swi.inc"  
+;
+; Standard includes bundled with PSION ORGANISER II CROSS ASSEMBLER
+;
+#include "osvars.inc"		; Contains the MKII operating system variables.
+#include "oseror.inc"		; Contains all the operating system errors.
+#include "oshead.inc"		; Contains constants and macros for the MKII operating system.
+#include "swi.inc"		; Contains the MK2 SWI's. (Software Interrupt Vectors)
 
 	.org 000  
 	.radix 10  
