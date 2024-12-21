@@ -104,6 +104,8 @@ Use of the Assembler PAK, which captures TRAP events, requires on device use whi
 The RDSFILE$ uility performs checksum calculation and aborts if the source Hex file is detected to be degraded.
 
 OPL code does not have to be re-translated if assembler code is updated and additional source verification could readily be added to the S0 record.
+
+It is not mandatory in this release an S0 record is included in the target hex file. This would reduce the size of the hex file by 17 bytes (inlcluding a CR).
 <BR>
 
 ## Limitations  
