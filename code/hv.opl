@@ -1,31 +1,25 @@
-HV:(I$)
-REM Convert 2 character string ASCII hex
+hv:(i$)
+REM Convert string ASCII hex
 REM to a byte value
 
-LOCAL C%
-LOCAL D%
-LOCAL V%
-LOCAL H$(2)
+REM Revision : 0.11
+REM Author   : NoFitnessForPurpose
+REM Date     : 21 Dec 2024
+
+LOCAL l% : REM    String length
+LOCAL h$(8) : REM Upper case input string
+LOCAL c : REM     Multiplier
+LOCAL v : REM     Value to return
 
 REM Ensure upper case for character conversion
-H$ = UPPER$(I$)
+h$ = UPPER$(i$)
 
 REM Extract ASCII character values
-C% = ASC(MID$(H$, 1, 1))
-D% = ASC(MID$(H$, 2, 1))
-
-IF (C% > %9)
-  C% = C% - 55 : REM Adjust A to F
-ELSE
-  C% = C% - %0
-ENDIF
-
-IF (D% > %9)
-  D% = D% - 55 : REM Adjust A to F
-ELSE
-  D% = D% - %0 : REM Subtract ASCII value offset
-ENDIF
-
-V% = (C% * 16) + D% : REM (MSN * 16) + LSN
-
-RETURN V%
+c = 1
+l% = len(h$)
+WHILE (l% > 0)
+  v = v + ((LOC("0123456789ABCDEF", MID$(h$, l%, 1)) - 1) * c)
+  l% = l% - 1
+  c = c * 16
+ENDWH
+RETURN v
