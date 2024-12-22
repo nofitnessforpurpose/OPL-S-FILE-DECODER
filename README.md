@@ -80,14 +80,14 @@ S9030000FC
 <BR>
 The following will read the 'beephex' file and decode 3 code bytes, to cause the device to sound the internal alarm:
 
-```BASIC
+```VBA
 RDSFILE:
-REM Wrapper to read a Motorola S File
+REM Wrapper to read a Motorola SREC File
 
-LOCAL b$(255) : REM Will hold machine code
+LOCAL b$(255) : REM Will hold machine code in RAM
 
-b$ = RDSFILE$:("A:beephex")
-USR(ADDR(b$) + 1, 0)
+b$ = RDSFILE$:("A:beephex") : REM Decode SREC file
+USR(ADDR(b$) + 1, 0) : REM CAll machine code
 ```
 
 <BR>
