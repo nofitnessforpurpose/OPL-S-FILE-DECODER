@@ -2,6 +2,12 @@ rdsfile:
 REM Wrapper to read
 REM a Motorola S File
 
+REM Revision : 0.11
+REM Author   : NoFitnessForPurpose
+REM Date     : 23 Dec 2024
+
+REM Note BEEPHEX assumed located on A:
+
 LOCAL b$(128)
 
 b$=RDSFILE$:("A:BEEPHEX")
