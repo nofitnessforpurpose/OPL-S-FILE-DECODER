@@ -1,8 +1,8 @@
 Source files for RDSFILE$.OPL
 
-beep.asm                      Trivial assembler source code example
+beep.asm                      Trivial Organiser II 6303 assembler source code example
 beep.hex                      SREC format output file from XA.EXE of beep.asm code
-hv.opl                        ASCII text Hexadeximal conversion routine
-rdsfile$.opl                  Converts specified SREC file to machine code
+hv.opl                        ASCII text Hexadecimal conversion routine
+rdsfile$.opl                  Converts specified SREC file to machine code held in a string
 rdsfile.opl                   Wraps rdsfile$.opl to create example usage
 readme                        This file
