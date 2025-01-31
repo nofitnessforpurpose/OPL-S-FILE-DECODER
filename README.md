@@ -1,7 +1,7 @@
 # OPL S-File Decoder
 OPL <a href="https://en.wikipedia.org/wiki/SREC_(file_format)">Motorola S File</a> To Machine Code Convertor
 
-This <a href="https://en.wikipedia.org/wiki/Psion_Organiser">Psion Orgnaiser II</a> <a href="https://en.wikipedia.org/wiki/Open_Programming_Language">OPL progam</a> converts the XA.EXE Motorola S-File 6303 Cross Assembler ouptut .HEX files and converts them to machine code.
+This <a href="https://en.wikipedia.org/wiki/Psion_Organiser"> Orgnaiser II</a> <a href="https://en.wikipedia.org/wiki/Open_Programming_Language">OPL progam</a> converts the XA.EXE Motorola S-File 6303 Cross Assembler ouptut .HEX files and converts them to machine code.
 
 <div align="center">
   <div style="display: flex; align-items: flex-start;">
